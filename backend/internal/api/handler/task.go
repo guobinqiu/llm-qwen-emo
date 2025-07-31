@@ -79,7 +79,6 @@ func CreateTask(mongoClient *mongo.Client, ossClient *oss.OSSClient) gin.Handler
 				AudioURL:   ossURL,
 				TaskID:     "",
 				TaskStatus: model.TaskStatusPending,
-				SubmitTime: time.Now(),
 				VideoURL:   "",
 			})
 		}
@@ -149,21 +148,25 @@ loop:
 				if sub.TaskStatus == model.TaskStatusSucceeded || sub.TaskStatus == model.TaskStatusFailed {
 					continue
 				}
-				status, videoURL, code, message, err := utils.QueryTaskStatus(sub.TaskID)
+
+				respData, err := utils.QueryTaskStatus(sub.TaskID)
 				if err != nil {
 					allDone = false
 					continue
 				}
 
-				sub.TaskStatus = status
-				sub.Code = code
-				sub.Message = message
-				if status == model.TaskStatusSucceeded {
-					sub.VideoURL = videoURL
+				sub.TaskStatus = respData.Output.TaskStatus
+				sub.Code = respData.Output.Code
+				sub.Message = respData.Output.Message
+				sub.ScheduledTime = respData.Output.ScheduledTime
+				sub.EndTime = respData.Output.EndTime
+
+				if sub.TaskStatus == model.TaskStatusSucceeded {
+					sub.VideoURL = respData.Output.Results.VideoURL
 				}
 
 				// 中间状态
-				if status != model.TaskStatusSucceeded && status != model.TaskStatusFailed {
+				if sub.TaskStatus != model.TaskStatusSucceeded && sub.TaskStatus != model.TaskStatusFailed {
 					allDone = false
 				}
 			}

@@ -28,13 +28,12 @@ type Task struct {
 }
 
 type SubTask struct {
-	AudioURL      string     `bson:"audio_url" json:"audio_url"`
-	TaskID        string     `bson:"task_id" json:"task_id"`
-	TaskStatus    string     `bson:"task_status" json:"task_status"`
-	SubmitTime    time.Time  `bson:"submit_time" json:"submit_time"`
-	ScheduledTime *time.Time `bson:"scheduled_time" json:"scheduled_time"`
-	EndTime       *time.Time `bson:"end_time" json:"end_time"`
-	VideoURL      string     `bson:"video_url" json:"video_url"` // oss视频url(片段)
-	Code          string     `bson:"code,omitempty" json:"code,omitempty"`
-	Message       string     `bson:"message,omitempty" json:"message,omitempty"`
+	AudioURL      string `bson:"audio_url" json:"audio_url"`
+	TaskID        string `bson:"task_id" json:"task_id"`
+	TaskStatus    string `bson:"task_status" json:"task_status"`
+	ScheduledTime string `bson:"scheduled_time" json:"scheduled_time"`
+	EndTime       string `bson:"end_time" json:"end_time"`
+	VideoURL      string `bson:"video_url" json:"video_url"` // oss视频url(片段)
+	Code          string `bson:"code,omitempty" json:"code,omitempty"`
+	Message       string `bson:"message,omitempty" json:"message,omitempty"`
 }

@@ -143,8 +143,8 @@
     </el-card>
 
     <!-- 视频播放弹窗 -->
-    <el-dialog :visible.sync="videoDialogVisible" title="视频预览" width="60%">
-      <video v-if="videoUrl" controls style="width: 100%">
+    <el-dialog :visible.sync="videoDialogVisible" title="视频预览" width="40%">
+      <video v-if="videoUrl" :key="videoUrl" controls style="width: 100%">
         <source :src="videoUrl" type="video/mp4" />
         您的浏览器不支持 video 标签。
       </video>
@@ -220,6 +220,7 @@ export default {
       this.loading = true
       listTasks()
         .then(res => {
+          console.log('任务列表:', res.data.tasks)
           this.taskList = res.data.tasks || []
           this.loading = false
         })

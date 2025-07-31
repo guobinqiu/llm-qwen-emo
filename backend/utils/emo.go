@@ -84,33 +84,41 @@ func GenerateVideo(imageURL, audioURL string, faceBBox, extBBox []int) (string, 
 	return respData.Output.TaskID, nil
 }
 
-func QueryTaskStatus(taskID string) (status, videoURL, code, message string, err error) {
+type RespData struct {
+	Output struct {
+		TaskID        string `json:"task_id"`
+		TaskStatus    string `json:"task_status"`
+		ScheduledTime string `json:"scheduled_time"`
+		EndTime       string `json:"end_time"`
+		SubmitTime    string `json:"submit_time"`
+		Code          string `json:"code,omitempty"`
+		Message       string `json:"message,omitempty"`
+		Results       struct {
+			VideoURL string `json:"video_url"`
+		} `json:"results"`
+	} `json:"output"`
+}
+
+func QueryTaskStatus(taskID string) (RespData, error) {
 	url := fmt.Sprintf(TaskAPIURL, taskID)
 	req, _ := http.NewRequest("GET", url, nil)
 	req.Header.Set("Authorization", "Bearer "+DashApiKey)
 	client := &http.Client{Timeout: 30 * time.Second}
 	resp, err := client.Do(req)
 	if err != nil {
-		return "", "", "", "", err
+		return RespData{}, err
 	}
 	defer resp.Body.Close()
+
 	if resp.StatusCode != http.StatusOK {
-		return "", "", "", "", fmt.Errorf("状态查询失败，HTTP状态码: %d", resp.StatusCode)
+		return RespData{}, fmt.Errorf("状态查询失败，HTTP状态码: %d", resp.StatusCode)
 	}
-	var respData struct {
-		Output struct {
-			TaskID     string `json:"task_id"`
-			TaskStatus string `json:"task_status"`
-			Code       string `json:"code,omitempty"`
-			Message    string `json:"message,omitempty"`
-			Results    struct {
-				VideoURL string `json:"video_url"`
-			} `json:"results"`
-		} `json:"output"`
-	}
+
+	var respData RespData
 	err = json.NewDecoder(resp.Body).Decode(&respData)
 	if err != nil {
-		return "", "", "", "", err
+		return RespData{}, err
 	}
-	return respData.Output.TaskStatus, respData.Output.Results.VideoURL, respData.Output.Code, respData.Output.Message, nil
+
+	return respData, nil
 }
