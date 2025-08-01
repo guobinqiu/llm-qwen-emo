@@ -1,4 +1,4 @@
-# EMO
+# EMO数字人视频生成系统
 
 <img width="600" height="400" alt="image" src="https://github.com/user-attachments/assets/b5989a0b-0c71-4d81-9a85-df343892096d" />
 
